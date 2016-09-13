@@ -54,16 +54,16 @@
         return;
       }
 
-      for (var topicPattern in Object.keys(subscribers[data.channel])) {
+      Object.keys(subscribers[data.channel]).forEach(function (topicPattern) {
         if (matchPattern(data.topic, topicPattern)) {
-          for (var subscriber in subscribers[data.channel][topicPattern]) {
+          subscribers[data.channel][topicPattern].forEach(function (subscriber) {
             subscriber(data.data, {
               channel: data.channel,
               topic: data.topic
             });
-          }
+          });
         }
-      }
+      });
     }
 
     return chab;
