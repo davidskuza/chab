@@ -1,0 +1,10 @@
+{
+  "name": "chab",
+  "version": "0.7.0",
+  "description": "",
+  "main": "src/chab.js",
+  "scripts": {
+  },
+  "author": "David Skuza",
+  "license": "ISC"
+}
