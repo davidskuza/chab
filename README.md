@@ -26,6 +26,8 @@ npm install chab --save
 
 # API
 
+API functions which do not get channel as arguments uses 'default'.
+
 ## chab instance
 
 ### <a id="subscribe"></a> `subscribe(topicPattern, callback)`
@@ -34,7 +36,7 @@ npm install chab --save
 Subscribes on given [`topic pattern`](#topicPattern).
 Callback receives two arguments: data which is passed by [`publish`](#publish) function and "envelope" which contains channel and topic (not pattern) on which message was published
 
-- - - 
+- - -
 
 ### <a id="publish"></a> `publish(topic, data)`
 ### `publish(channel, topic, data, onlyOnce)`
