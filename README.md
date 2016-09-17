@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/davidskuza/chab.svg?branch=master)](https://travis-ci.org/davidskuza/chab) [![npm version](https://badge.fury.io/js/chab.svg)](https://badge.fury.io/js/chab)
 
+Simple to use implementation of pub/sub, in-browser message queue.
+
 As for now needs ES2015 (used with [`babel`](https://babeljs.io/) for example).
 
 # Example
