@@ -2,7 +2,7 @@
   "name": "chab",
   "version": "0.8.0",
   "description": "",
-  "main": "src/chab.js",
+  "main": "index.js",
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",
