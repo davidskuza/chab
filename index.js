@@ -1,22 +1,23 @@
+export const doTextMatchPattern = (text, pattern) => {
+  var containsPattern = pattern.includes('*') || pattern.includes('#')
+
+  if (!containsPattern) {
+    return text === pattern
+  }
+
+  let regExp = pattern.replace(/\./g, '\\.')
+  regExp = regExp.replace(/\*/g, '\\w+');
+  regExp = regExp.replace(/#/g, '.+?');
+  regExp = '^' + regExp + '$';
+
+  regExp = new RegExp(regExp);
+
+  return regExp.test(text);
+}
+
 export default () => {
   return {
     subscribers: {},
-    doTextMatchPattern: (text, pattern) => {
-      var containsPattern = pattern.includes('*') || pattern.includes('#')
-
-      if (!containsPattern) {
-        return text === pattern
-      }
-
-      let regExp = pattern.replace(/\./g, '\\.')
-      regExp = regExp.replace(/\*/g, '\\w+');
-      regExp = regExp.replace(/#/g, '.+?');
-      regExp = '^' + regExp + '$';
-
-      regExp = new RegExp(regExp);
-
-      return regExp.test(text);
-    },
     subscribe: function () {
       // if we don't provide 3 arguments then we get 1st argument as topic and 2nd
       //  as callback, channel is 'default'
@@ -97,7 +98,7 @@ export default () => {
         return
       }
 
-      const matchedTopicPatterns = Object.keys(this.subscribers[channel]).filter(t => this.doTextMatchPattern(topic, t))
+      const matchedTopicPatterns = Object.keys(this.subscribers[channel]).filter(t => doTextMatchPattern(topic, t))
 
       for (const topicPattern of matchedTopicPatterns) {
         if (!onlyOnce) {

@@ -1,4 +1,4 @@
-import CreateChab from './index'
+import CreateChab, { doTextMatchPattern } from './index'
 
 const TEXT_PATTERN_EXCEPTATION = [
   ['topic', 'topic', true],
@@ -26,9 +26,7 @@ for (const testData of TEXT_PATTERN_EXCEPTATION) {
   }
 
   test(title, () => {
-    const chab = CreateChab()
-
-    expect(chab.doTextMatchPattern(testData[0], testData[1])).toBe(testData[2])
+    expect(doTextMatchPattern(testData[0], testData[1])).toBe(testData[2])
   })
 }
 
