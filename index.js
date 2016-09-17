@@ -1,83 +1,120 @@
-(function() {
-  var chab = (function() {
-    var chab = {};
-    var subscribers = {};
-
-    function matchPattern(text, pattern) {
-      var containsPattern = pattern.indexOf('*') !== -1 || pattern.indexOf('#') !== -1;
+export default () => {
+  return {
+    subscribers: {},
+    doTextMatchPattern: (text, pattern) => {
+      var containsPattern = pattern.includes('*') || pattern.includes('#')
 
       if (!containsPattern) {
-        return text === pattern;
-      } else {
-        var regExp = pattern.replace(/\./g, '\\.');
-        regExp = regExp.replace(/\*/g, '\\w+');
-        regExp = regExp.replace(/#/g, '.+?');
-        regExp = '^' + regExp + '$';
-
-        regExp = new RegExp(regExp);
-
-        return regExp.test(text);
-      }
-    }
-
-    chab.subscribe = function (data) {
-      if (data.channel === undefined) {
-        data.channel = 'default';
+        return text === pattern
       }
 
-      if (subscribers[data.channel] === undefined) {
-        subscribers[data.channel] = {};
+      let regExp = pattern.replace(/\./g, '\\.')
+      regExp = regExp.replace(/\*/g, '\\w+');
+      regExp = regExp.replace(/#/g, '.+?');
+      regExp = '^' + regExp + '$';
+
+      regExp = new RegExp(regExp);
+
+      return regExp.test(text);
+    },
+    subscribe: function () {
+      // if we don't provide 3 arguments then we get 1st argument as topic and 2nd
+      //  as callback, channel is 'default'
+
+      let channel = arguments[0]
+      let topicPattern = arguments[1]
+      let callback = arguments[2]
+
+      if (arguments.length === 2) {
+        channel = 'default'
+        topicPattern = arguments[0]
+        callback = arguments[1]
       }
 
-      if (subscribers[data.channel][data.topic] === undefined) {
-        subscribers[data.channel][data.topic] = [];
+      if (this.subscribers[channel] === undefined) {
+        this.subscribers[channel] = {}
       }
 
-      subscribers[data.channel][data.topic].push(data.callback);
+      if (this.subscribers[channel][topicPattern] === undefined) {
+        this.subscribers[channel][topicPattern] = { subscribers: [], queued: [] }
+      }
+
+      this.subscribers[channel][topicPattern].subscribers.push(callback)
+
+      for (const queued of this.subscribers[channel][topicPattern].queued) {
+        callback(queued.data, {
+          channel: queued.channel,
+          topic: queued.topic
+        })
+      }
+
+      this.subscribers[channel][topicPattern].queued = []
 
       return {
-        unsubscribe: function () {
-          var callbackIndex = subscribers[data.channel][data.topic].indexOf(data.callback);
-          if (callbackIndex > -1) {
-            subscribers[data.channel][data.topic].splice(callbackIndex, 1);
+        unsubscribe: () => {
+          const index = this.subscribers[channel][topicPattern].subscribers
+            .findIndex(s => s === callback)
+
+          if (index !== -1) {
+            this.subscribers[channel][topicPattern].subscribers.splice(index, 1)
           }
         }
       }
-    }
+    },
+    publish: function () {
+      let channel = arguments[0]
+      let topic = arguments[1]
+      let data = arguments[2]
+      let onlyOnce = arguments[3]
 
-    chab.publish = function (data) {
-      if (data.channel === undefined) {
-        data.channel = 'default';
+      if (arguments.length === 3) {
+        channel = 'default'
+        topic = arguments[0]
+        data = arguments[1]
+        onlyOnce = arguments[2]
+      } else if (arguments.length === 2) {
+        channel = 'default'
+        topic = arguments[0]
+        data = arguments[1]
+        onlyOnce = false
       }
 
-      if (subscribers[data.channel] === undefined) {
-        return;
-      }
-
-      Object.keys(subscribers[data.channel]).forEach(function (topicPattern) {
-        if (matchPattern(data.topic, topicPattern)) {
-          subscribers[data.channel][topicPattern].forEach(function (subscriber) {
-            subscriber(data.data, {
-              channel: data.channel,
-              topic: data.topic
-            });
-          });
+      if (this.subscribers[channel] === undefined ||
+        this.subscribers[channel][topic] === undefined ||
+        this.subscribers[channel][topic].subscribers.length == 0) {
+        this.subscribers[channel] = {
+          topic: {
+            subscribers: [],
+            queued: [
+              {
+                channel,
+                topic,
+                data
+              }
+            ]
+          }
         }
-      });
-    }
+        return
+      }
 
-    return chab;
-  })();
+      const matchedTopicPatterns = Object.keys(this.subscribers[channel]).filter(t => this.doTextMatchPattern(topic, t))
 
-  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = chab;
-  } else {
-    if (typeof defined === 'function' && define.amd) {
-      define([], function() {
-        return chab;
-      })
-    } else {
-      window.chab = chab;
+      for (const topicPattern of matchedTopicPatterns) {
+        if (!onlyOnce) {
+          this.subscribers[channel][topicPattern].subscribers
+            .forEach(s => s(data, {
+              channel,
+              topic
+            }))
+        } else {
+          const subCount = this.subscribers[channel][topicPattern].subscribers.length
+          this.subscribers[channel][topicPattern]
+            .subscribers[subCount - 1](data, {
+              channel,
+              topic
+            })
+        }
+      }
     }
   }
-})();
+}

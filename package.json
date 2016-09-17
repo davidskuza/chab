@@ -4,7 +4,18 @@
   "description": "",
   "main": "src/chab.js",
   "scripts": {
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "test-coverage": "jest --coverage"
   },
   "author": "David Skuza",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.14.0",
+    "babel-jest": "^15.0.0",
+    "babel-loader": "^6.2.5",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-es2015": "^6.14.0",
+    "jest": "^15.1.1"
+  }
 }
