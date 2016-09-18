@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "babel chab.js --out-file index.js",
     "test": "jest",
     "test-watch": "jest --watch",
     "test-coverage": "jest --coverage"
@@ -11,6 +12,7 @@
   "author": "David Skuza",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.14.0",
     "babel-core": "^6.14.0",
     "babel-jest": "^15.0.0",
     "babel-loader": "^6.2.5",

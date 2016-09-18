@@ -175,6 +175,18 @@ test('publishing to not subscribed topic and then subscribing receives', () => {
   expect(callbackMock.mock.calls[0][0]).toBe('passed')
 })
 
+test('publishing to not subscribed topic and then subscribing receives (3 args)', () => {
+  const chab = CreateChab()
+
+  chab.publish('channel', 'topic', 'passed')
+
+  const callbackMock = jest.fn()
+  chab.subscribe('channel', 'topic', callbackMock)
+
+  expect(callbackMock.mock.calls.length).toBe(1)
+  expect(callbackMock.mock.calls[0][0]).toBe('passed')
+})
+
 test('subscribing, unsubscribing and publishing adds to queued', () => {
   const chab = CreateChab()
 
@@ -195,7 +207,7 @@ test('publishing to only one receives only one callback', () => {
   chab.subscribe('topic', callbackMock)
   chab.subscribe('topic', callbackMock2)
 
-  chab.publish('topic', 'passed', true)
+  chab.publish('default', 'topic', 'passed', true)
 
   expect(callbackMock.mock.calls.length).toBe(0)
   expect(callbackMock2.mock.calls.length).toBe(1)
@@ -205,7 +217,7 @@ test('publishing to only one receives only one callback', () => {
 test('publishing to only one receives only one callback (with late subscribing)', () => {
   const chab = CreateChab()
 
-  chab.publish('topic', 'passed', true)
+  chab.publish('default', 'topic', 'passed', true)
 
   const callbackMock = jest.fn()
   const callbackMock2 = jest.fn()

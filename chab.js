@@ -69,10 +69,10 @@ export default () => {
       let onlyOnce = arguments[3]
 
       if (arguments.length === 3) {
-        channel = 'default'
-        topic = arguments[0]
-        data = arguments[1]
-        onlyOnce = arguments[2]
+        channel = arguments[0]
+        topic = arguments[1]
+        data = arguments[2]
+        onlyOnce = false
       } else if (arguments.length === 2) {
         channel = 'default'
         topic = arguments[0]
