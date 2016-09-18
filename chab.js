@@ -109,7 +109,7 @@ export default () => {
 
       const matchingSubscribersCount = matchedTopicPatterns
         .map(t => this.subscribers[channel][t].subscribers.length)
-        .reduce((acc, len) => acc += len)
+        .reduce((acc, len) => acc += len, 0)
 
       if (matchingSubscribersCount === 0) {
         if (this.queued[channel] === undefined) {
