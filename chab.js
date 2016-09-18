@@ -18,6 +18,7 @@ export const doTextMatchPattern = (text, pattern) => {
 export default () => {
   return {
     subscribers: {},
+    queued: {},
     subscribe: function () {
       // if we don't provide 3 arguments then we get 1st argument as topic and 2nd
       //  as callback, channel is 'default'
@@ -37,19 +38,26 @@ export default () => {
       }
 
       if (this.subscribers[channel][topicPattern] === undefined) {
-        this.subscribers[channel][topicPattern] = { subscribers: [], queued: [] }
+        this.subscribers[channel][topicPattern] = { subscribers: [] }
       }
 
       this.subscribers[channel][topicPattern].subscribers.push(callback)
 
-      for (const queued of this.subscribers[channel][topicPattern].queued) {
-        callback(queued.data, {
-          channel: queued.channel,
-          topic: queued.topic
-        })
-      }
+      if (this.queued[channel] !== undefined) {
+        const matchingQueuedTopics = Object.keys(this.queued[channel])
+          .filter(t => doTextMatchPattern(t, topicPattern))
 
-      this.subscribers[channel][topicPattern].queued = []
+        for (const topic of matchingQueuedTopics) {
+          for (const data of this.queued[channel][topic]) {
+            callback(data.data, {
+              channel: data.channel,
+              topic: data.topic
+            })
+          }
+
+          this.queued[channel][topic] = []
+        }
+      }
 
       return {
         unsubscribe: () => {
@@ -80,40 +88,61 @@ export default () => {
         onlyOnce = false
       }
 
-      if (this.subscribers[channel] === undefined ||
-        this.subscribers[channel][topic] === undefined ||
-        this.subscribers[channel][topic].subscribers.length == 0) {
-        this.subscribers[channel] = {
-          topic: {
-            subscribers: [],
-            queued: [
-              {
-                channel,
-                topic,
-                data
-              }
-            ]
-          }
+      if (this.subscribers[channel] === undefined) {
+        if (this.queued[channel] === undefined) {
+          this.queued[channel] = {}
         }
+        if (this.queued[channel][topic] === undefined) {
+          this.queued[channel][topic] = []
+        }
+
+        this.queued[channel][topic].push({
+          channel,
+          topic,
+          data
+        })
+
         return
       }
 
       const matchedTopicPatterns = Object.keys(this.subscribers[channel]).filter(t => doTextMatchPattern(topic, t))
 
-      for (const topicPattern of matchedTopicPatterns) {
-        if (!onlyOnce) {
-          this.subscribers[channel][topicPattern].subscribers
-            .forEach(s => s(data, {
-              channel,
-              topic
-            }))
-        } else {
+      const matchingSubscribersCount = matchedTopicPatterns
+        .map(t => this.subscribers[channel][t].subscribers.length)
+        .reduce((acc, len) => acc += len)
+
+      if (matchingSubscribersCount === 0) {
+        if (this.queued[channel] === undefined) {
+          this.queued[channel] = {}
+        }
+        if (this.queued[channel][topic] === undefined) {
+          this.queued[channel][topic] = []
+        }
+
+        this.queued[channel][topic].push({
+          channel,
+          topic,
+          data
+        })
+
+        return
+      }
+
+      for (const topicPattern of matchedTopicPatterns.reverse()) {
+        if (onlyOnce) {
           const subCount = this.subscribers[channel][topicPattern].subscribers.length
           this.subscribers[channel][topicPattern]
             .subscribers[subCount - 1](data, {
               channel,
               topic
             })
+          return
+        } else {
+          this.subscribers[channel][topicPattern].subscribers
+            .forEach(s => s(data, {
+              channel,
+              topic
+            }))
         }
       }
     }
