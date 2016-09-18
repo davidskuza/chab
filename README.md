@@ -43,8 +43,8 @@ Callback receives two arguments: data which is passed by [`publish`](#publish) f
 - - -
 
 ### <a id="publish"></a> `publish(topic, data)`
+### `publish(channel, topic, data)`
 ### `publish(channel, topic, data, onlyOnce)`
-### `publish(topic, data, onlyOnce)`
 
 Publishes message on given channel and topic.
 If no subscriber will be found at publish time message gets stored and dispatched when somebody finally subscribes.
