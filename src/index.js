@@ -15,7 +15,7 @@ export const doTextMatchPattern = (text, pattern) => {
   return regExp.test(text);
 }
 
-export default () => {
+export const CreateChab = () => {
   return {
     subscribers: {},
     queued: {},

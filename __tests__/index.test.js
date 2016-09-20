@@ -1,4 +1,4 @@
-import CreateChab, { doTextMatchPattern } from './chab'
+import { CreateChab, doTextMatchPattern } from '../src/index'
 
 const TEXT_PATTERN_EXCEPTATION = [
   ['topic', 'topic', true],

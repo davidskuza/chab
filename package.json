@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "babel chab.js --out-file index.js",
+    "build": "webpack",
     "test": "jest",
     "test-watch": "jest --watch",
     "test-coverage": "jest --coverage",
@@ -19,6 +19,7 @@
     "babel-loader": "^6.2.5",
     "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.14.0",
-    "jest": "^15.1.1"
+    "jest": "^15.1.1",
+    "webpack": "^1.13.2"
   }
 }

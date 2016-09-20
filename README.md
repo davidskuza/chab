@@ -4,12 +4,26 @@
 
 Simple to use implementation of pub/sub, in-browser message queue.
 
-As for now needs ES2015 (used with [`babel`](https://babeljs.io/) for example).
+As for now needs ES2015.
 
-# Example
+# Usage
+
+### NPM
+
+```
+npm install chab --save
+```
+
+### Browser
+
+```
+<script type="text/javascript" src="chab.js"></script>
+```
+
+# Example with Babel & webpack
 
 ```js
-import CreateChab from 'chab'
+import { CreateChab } from 'chab'
 
 const chab = CreateChab()
 
@@ -22,10 +36,10 @@ chab.publish('channel', 'topic.subtopic', { name: 'User' })
 sub.unsubscribe()
 ```
 
-# Instalation
+# In browser available from chab namespace
 
-```
-npm install chab --save
+```js
+chab.CreateChab()
 ```
 
 # API
