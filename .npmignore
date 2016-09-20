@@ -1,6 +1,9 @@
 src
 __tests__
 .travis.yml
+webpack.config.js
+.babelrc
+.npmignore
 
 # Logs
 logs

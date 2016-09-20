@@ -2,7 +2,7 @@
   "name": "chab",
   "version": "0.10.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/chab.min.js",
   "scripts": {
     "build": "webpack",
     "test": "jest",
