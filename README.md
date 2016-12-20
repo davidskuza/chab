@@ -49,7 +49,9 @@ chab.CreateChab()
 ### <a id="subscribe"></a> `subscribe(topic, callback)`
 
 Subscribes on given topic.
-Callback one argument: data which is passed by [`publish`](#publish) function
+Callback is called with two arguments: 
+  - data which is passed by [`publish`](#publish) function
+  - unsubscribe function, which when called will unsubscribe
 
 - - -
 
