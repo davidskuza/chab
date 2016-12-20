@@ -11,7 +11,16 @@ export const CreateChab = () => {
 
       if (this.queued[topic] !== undefined) {
         for (const queuedTopicItem of this.queued[topic]) {
-          callback(queuedTopicItem)
+          const result = callback(queuedTopicItem)
+          
+          if (result) {
+            const index = this.subscribers[topic]
+              .findIndex(s => s === subscriber)
+  
+            if (index !== -1) {
+              this.subscribers[topic].splice(index, 1)
+            }
+          }
         }
 
         this.queued[topic] = []

@@ -140,3 +140,34 @@ test(`few subscribers subscribing and returning true with `
     
     expect(chab.subscribers['topicName'].length).toBe(2)
   })
+  
+test(`few subscribers subscribing and returning true with `
+     + `subscriber function will unsubscribe`,
+  () => {
+    const chab = CreateChab()
+    
+    chab.subscribe('topicName', () => false)
+    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', () => {})
+    
+    chab.publish('topicName', 'passed')
+    
+    expect(chab.subscribers['topicName'].length).toBe(2)
+    
+    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', () => {})
+    
+    chab.publish('topicName', 'passed')
+    
+    expect(chab.subscribers['topicName'].length).toBe(3)
+  })
+  
+test('first publish then unsubscribe by returning true', () => {
+  const chab = CreateChab()
+  
+  chab.publish('topicName')
+  
+  chab.subscribe('topicName', () => true)
+  
+  expect(chab.subscribers['topicName'].length).toBe(0)
+})
