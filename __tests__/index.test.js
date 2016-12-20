@@ -116,24 +116,23 @@ test('subscribing, unsubscribing and publishing adds to queued', () => {
   expect(chab.queued['topicName'].length).toBe(1)
 })
 
-test('subscribing and returning true with subscriber function will unsubscribe',
+test('subscribing and calling second argument will unsubscribe',
   () => {
     const chab = CreateChab()
     
-    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', (data, unsubscribe) => unsubscribe())
     
     chab.publish('topicName', 'passed')
     
     expect(chab.subscribers['topicName'].length).toBe(0)
   })
   
-test(`few subscribers subscribing and returning true with `
-     + `subscriber function will unsubscribe`,
+test(`few subscribers subscribing and one calling 2nd argument will unsubscribe`,
   () => {
     const chab = CreateChab()
     
-    chab.subscribe('topicName', () => false)
-    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', () => {})
+    chab.subscribe('topicName', (data, unsubscribe) => unsubscribe())
     chab.subscribe('topicName', () => {})
     
     chab.publish('topicName', 'passed')
@@ -141,20 +140,19 @@ test(`few subscribers subscribing and returning true with `
     expect(chab.subscribers['topicName'].length).toBe(2)
   })
   
-test(`few subscribers subscribing and returning true with `
-     + `subscriber function will unsubscribe`,
+test(`few subscribers subscribing and few calling 2nd argument will unsubscribe`,
   () => {
     const chab = CreateChab()
     
     chab.subscribe('topicName', () => false)
-    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', (data, unsubscribe) => unsubscribe())
     chab.subscribe('topicName', () => {})
     
     chab.publish('topicName', 'passed')
     
     expect(chab.subscribers['topicName'].length).toBe(2)
     
-    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', (data, unsubscribe) => unsubscribe())
     chab.subscribe('topicName', () => {})
     
     chab.publish('topicName', 'passed')
@@ -162,12 +160,12 @@ test(`few subscribers subscribing and returning true with `
     expect(chab.subscribers['topicName'].length).toBe(3)
   })
   
-test('first publish then unsubscribe by returning true', () => {
+test('first publish then unsubscribe by calling 2nd argument', () => {
   const chab = CreateChab()
   
   chab.publish('topicName')
   
-  chab.subscribe('topicName', () => true)
+  chab.subscribe('topicName', (data, unsubscribe) => unsubscribe())
   
   expect(chab.subscribers['topicName'].length).toBe(0)
 })

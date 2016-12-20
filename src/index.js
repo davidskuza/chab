@@ -11,16 +11,16 @@ export const CreateChab = () => {
 
       if (this.queued[topic] !== undefined) {
         for (const queuedTopicItem of this.queued[topic]) {
-          const result = callback(queuedTopicItem)
+          const self = this
           
-          if (result) {
-            const index = this.subscribers[topic]
+          callback(queuedTopicItem, function unsubscribe() {
+            const index = self.subscribers[topic]
               .findIndex(s => s === callback)
   
             if (index !== -1) {
-              this.subscribers[topic].splice(index, 1)
+              self.subscribers[topic].splice(index, 1)
             }
-          }
+          })
         }
 
         this.queued[topic] = []
@@ -53,16 +53,16 @@ export const CreateChab = () => {
       }
       
       for (const subscriber of this.subscribers[topic]) {
-        const result = subscriber(data)
+        const self = this
         
-        if (result) {
-          const index = this.subscribers[topic]
+        subscriber(data, function unsubscribe() {
+          const index = self.subscribers[topic]
             .findIndex(s => s === subscriber)
 
           if (index !== -1) {
-            this.subscribers[topic].splice(index, 1)
+            self.subscribers[topic].splice(index, 1)
           }
-        }
+        })
       }
     }
   }
