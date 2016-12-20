@@ -15,7 +15,7 @@ export const CreateChab = () => {
           
           if (result) {
             const index = this.subscribers[topic]
-              .findIndex(s => s === subscriber)
+              .findIndex(s => s === callback)
   
             if (index !== -1) {
               this.subscribers[topic].splice(index, 1)
