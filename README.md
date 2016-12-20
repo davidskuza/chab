@@ -54,9 +54,6 @@ Callback one argument: data which is passed by [`publish`](#publish) function
 - - -
 
 ### <a id="publish"></a> `publish(topic, data)`
-### `publish(topic, data, onlyOnce)`
 
 Publishes message on given topic.
 If no subscriber will be found at publish time message gets stored and dispatched when somebody finally subscribes.
-
-onlyOnce is used when there are many subscribers or can be and you need to be sure that it's dispatched to only one subscriber.

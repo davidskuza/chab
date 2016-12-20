@@ -28,7 +28,7 @@ export const CreateChab = () => {
         }
       }
     },
-    publish: function (topic, data, onlyOnce) {
+    publish: function (topic, data) {
       if (this.subscribers[topic] === undefined) {
         this.subscribers[topic] = []
       }
@@ -42,11 +42,18 @@ export const CreateChab = () => {
 
         return
       }
+      
+      for (const subscriber of this.subscribers[topic]) {
+        const result = subscriber(data)
+        
+        if (result) {
+          const index = this.subscribers[topic]
+            .findIndex(s => s === subscriber)
 
-      if (onlyOnce) {
-        this.subscribers[topic][this.subscribers[topic].length - 1](data)
-      } else {
-        this.subscribers[topic].forEach(s => s(data))
+          if (index !== -1) {
+            this.subscribers[topic].splice(index, 1)
+          }
+        }
       }
     }
   }

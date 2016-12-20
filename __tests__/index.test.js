@@ -116,34 +116,27 @@ test('subscribing, unsubscribing and publishing adds to queued', () => {
   expect(chab.queued['topicName'].length).toBe(1)
 })
 
-test('publishing to only one receives only one callback', () => {
-  const chab = CreateChab()
-
-  const callbackMock = jest.fn()
-  const callbackMock2 = jest.fn()
-
-  chab.subscribe('topicName', callbackMock)
-  chab.subscribe('topicName', callbackMock2)
-
-  chab.publish('topicName', 'passed', true)
-
-  expect(callbackMock.mock.calls.length).toBe(0)
-  expect(callbackMock2.mock.calls.length).toBe(1)
-  expect(callbackMock2.mock.calls[0][0]).toBe('passed')
-})
-
-test('publishing to only one receives only one callback (with late subscribing)', () => {
-  const chab = CreateChab()
-
-  chab.publish('topicName', 'passed', true)
-
-  const callbackMock = jest.fn()
-  const callbackMock2 = jest.fn()
-
-  chab.subscribe('topicName', callbackMock)
-  chab.subscribe('topicName', callbackMock2)
-
-  expect(callbackMock.mock.calls.length).toBe(1)
-  expect(callbackMock.mock.calls[0][0]).toBe('passed')
-  expect(callbackMock2.mock.calls.length).toBe(0)
-})
+test('subscribing and returning true with subscriber function will unsubscribe',
+  () => {
+    const chab = CreateChab()
+    
+    chab.subscribe('topicName', () => true)
+    
+    chab.publish('topicName', 'passed')
+    
+    expect(chab.subscribers['topicName'].length).toBe(0)
+  })
+  
+test(`few subscribers subscribing and returning true with `
+     + `subscriber function will unsubscribe`,
+  () => {
+    const chab = CreateChab()
+    
+    chab.subscribe('topicName', () => false)
+    chab.subscribe('topicName', () => true)
+    chab.subscribe('topicName', () => {})
+    
+    chab.publish('topicName', 'passed')
+    
+    expect(chab.subscribers['topicName'].length).toBe(2)
+  })
